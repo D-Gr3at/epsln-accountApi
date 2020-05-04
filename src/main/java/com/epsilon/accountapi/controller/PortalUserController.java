@@ -1,13 +1,18 @@
 package com.epsilon.accountapi.controller;
 
 import com.epsilon.accountapi.dto.CreatePortalUserDto;
+import com.epsilon.accountapi.dto.LoginRequest;
 import com.epsilon.accountapi.dto.UpdatePortalUserDto;
 import com.epsilon.accountapi.exception.DoesNotExistException;
 import com.epsilon.accountapi.model.PortalUser;
 import com.epsilon.accountapi.service.PortalUserService;
+import com.epsilon.accountapi.serviceImplementation.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -16,11 +21,21 @@ import javax.validation.Valid;
 @RestController
 public class PortalUserController {
 
-    PortalUserService portalUserService;
+    private AuthenticationManager authenticationManager;
+
+    private PortalUserService portalUserService;
+
+    private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
-    PortalUserController(PortalUserService portalUserService){
+    PortalUserController(
+            PortalUserService portalUserService,
+            AuthenticationManager authenticationManager,
+            UserDetailsServiceImpl userDetailsService
+    ){
         this.portalUserService = portalUserService;
+        this.authenticationManager = authenticationManager;
+        this.userDetailsService = userDetailsService;
     }
 
     @PostMapping("/sign-up")
@@ -34,6 +49,19 @@ public class PortalUserController {
         });
         portalUserService.createPortalUser(portalUserDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping("/sign-in")
+    public ResponseEntity<?> portalUserLogin(@RequestBody LoginRequest loginRequest) throws Exception {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
+            );
+        }catch (Exception e){
+            throw  new Exception("Incorrect email or password");
+        }
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail().trim());
+        return ResponseEntity.ok(userDetails);
     }
 
     @PutMapping("/update/{id}")

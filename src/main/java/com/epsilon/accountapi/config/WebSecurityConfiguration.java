@@ -1,9 +1,10 @@
-package com.epsilon.accountapi.config.security;
+package com.epsilon.accountapi.config;
 
+import com.epsilon.accountapi.filter.AuthenticationFilter;
+import com.epsilon.accountapi.filter.AuthorizationFilter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,7 +19,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.servlet.http.HttpServletResponse;
 
-import static com.epsilon.accountapi.config.security.SecurityConstants.SIGN_UP_URL;
+import static com.epsilon.accountapi.utils.SecurityConstants.SIGN_IN_URL;
+import static com.epsilon.accountapi.utils.SecurityConstants.SIGN_UP_URL;
 
 @Configuration
 @EnableWebSecurity
@@ -46,7 +48,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable().exceptionHandling()
                 .authenticationEntryPoint(
                         (request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
-                .and().authorizeRequests().antMatchers(HttpMethod.GET, SIGN_UP_URL).permitAll()
+                .and().authorizeRequests().
+                antMatchers(SIGN_UP_URL, SIGN_IN_URL).permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

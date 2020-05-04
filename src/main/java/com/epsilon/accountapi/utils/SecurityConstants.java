@@ -1,4 +1,4 @@
-package com.epsilon.accountapi.config.security;
+package com.epsilon.accountapi.utils;
 
 public class SecurityConstants {
     public static final String SECRET = "SecretKeyToGenJWTs";
@@ -6,4 +6,5 @@ public class SecurityConstants {
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
     public static final String SIGN_UP_URL = "/api/v1/account/sign-up";
+    public static final String SIGN_IN_URL = "/api/v1/account/sign-in";
 }
