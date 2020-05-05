@@ -6,7 +6,10 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -17,6 +20,8 @@ public class Permission extends BaseIdEntity implements Serializable {
 
     private static final long serialVersionUID = 13L;
 
-    private String permission;
+    private String name;
 
+    @ManyToMany(mappedBy = "permissions", fetch = FetchType.EAGER)
+    private List<Role> roles;
 }

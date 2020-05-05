@@ -8,7 +8,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
 import java.io.Serializable;
 import java.util.*;
 
@@ -37,7 +36,7 @@ public class PortalUser extends BaseIdEntity implements Serializable, UserDetail
     @Column(name = "phone_number", length = 15, nullable = false)
     private String phoneNumber;
 
-    @Column(name = "password", nullable = false, length = 16)
+    @Column(name = "password", nullable = false, length = 100)
     private String password;
 
     @Column(name = "date_created", nullable = false)
@@ -56,7 +55,7 @@ public class PortalUser extends BaseIdEntity implements Serializable, UserDetail
     @Enumerated(EnumType.STRING)
     private GenderConstant gender;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "user_role", joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id")},
     inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName = "id")})
     private List<Role> roles;
@@ -71,7 +70,7 @@ public class PortalUser extends BaseIdEntity implements Serializable, UserDetail
         roles.forEach(role -> {
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
             role.getPermissions().forEach(permission -> {
-                grantedAuthorities.add(new SimpleGrantedAuthority(permission.getPermission()));
+                grantedAuthorities.add(new SimpleGrantedAuthority(permission.getName()));
             });
         });
         return grantedAuthorities;

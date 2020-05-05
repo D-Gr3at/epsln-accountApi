@@ -8,6 +8,7 @@ import com.epsilon.accountapi.exception.DoesNotExistException;
 import com.epsilon.accountapi.model.PortalUser;
 import com.epsilon.accountapi.service.AddressService;
 import com.epsilon.accountapi.service.PortalUserService;
+import com.epsilon.accountapi.service.RoleService;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -33,15 +34,19 @@ public class PortalUserServiceImpl implements PortalUserService {
 
     private AddressService addressService;
 
+    private RoleService roleService;
+
     @Autowired
     PortalUserServiceImpl(
             @Qualifier("portalUserRepo")PortalUserRepository portalUserRepository,
             BCryptPasswordEncoder bCryptPasswordEncoder,
-            AddressService addressService
+            AddressService addressService,
+            RoleService roleService
     ){
         this.portalUserRepository = portalUserRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.addressService = addressService;
+        this.roleService = roleService;
     }
 
     @Override

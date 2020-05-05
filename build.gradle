@@ -21,6 +21,7 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	compile group: 'com.google.guava', name: 'guava', version: '12.0.1'
 	compile("com.auth0:java-jwt:3.4.0")
 	implementation group: 'commons-io', name: 'commons-io', version: '2.6'
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'

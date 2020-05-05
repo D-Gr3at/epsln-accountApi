@@ -1,4 +1,4 @@
-package com.epsilon.accountapi.filter;
+package com.epsilon.accountapi.filters;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

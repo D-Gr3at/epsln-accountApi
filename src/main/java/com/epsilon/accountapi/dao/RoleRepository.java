@@ -1,0 +1,21 @@
+package com.epsilon.accountapi.dao;
+
+import com.epsilon.accountapi.model.Role;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface RoleRepository extends JpaRepository<Role, Long> {
+
+    Role findRoleByName(String roleName);
+
+    List<Role> findByNameIn(List<String> names);
+
+    Role findByName(String name);
+
+    @Query("select pu.roles from PortalUser pu where pu.email = ?1")
+    List<Role> findRolesByEmail(String email);
+}
