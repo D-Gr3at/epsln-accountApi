@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 @Data
@@ -20,13 +21,13 @@ public class Role extends BaseIdEntity implements Serializable {
 
     private String name;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @ManyToMany(mappedBy = "roles")
+    private Collection<PortalUser> portalUsers;
+
+    @ManyToMany
     @JoinTable(name = "role_permission", joinColumns = {
             @JoinColumn(name = "role_id", referencedColumnName = "id") }, inverseJoinColumns = {
             @JoinColumn(name = "permission_id", referencedColumnName = "id") })
-    private List<Permission> permissions;
-
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
-    private List<PortalUser> portalUsers;
+    private Collection<Permission> permissions;
 
 }

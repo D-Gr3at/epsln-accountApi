@@ -14,7 +14,7 @@ import javax.validation.Valid;
 
 @RequestMapping("/account")
 @RestController
-@CrossOrigin
+@CrossOrigin(value = "*")
 public class PortalUserController {
 
     PortalUserService portalUserService;

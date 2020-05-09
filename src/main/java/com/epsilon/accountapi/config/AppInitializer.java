@@ -9,6 +9,8 @@ import com.epsilon.accountapi.model.Address;
 import com.epsilon.accountapi.model.Permission;
 import com.epsilon.accountapi.model.PortalUser;
 import com.epsilon.accountapi.model.Role;
+import com.epsilon.accountapi.service.PermissionService;
+import com.epsilon.accountapi.service.RoleService;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +32,10 @@ public class AppInitializer {
 
     private RoleRepository roleRepository;
 
+    private RoleService roleService;
+
+    private PermissionService permissionService;
+
     private PermissionRepository permissionRepository;
 
     private static final Map<List<String>, List<String>> initialRoles = ImmutableMap.<List<String>, List<String>>builder()
@@ -41,13 +47,19 @@ public class AppInitializer {
             PortalUserRepository portalUserRepository,
             PasswordEncoder passwordEncoder,
             RoleRepository roleRepository,
-            PermissionRepository permissionRepository
+            PermissionRepository permissionRepository,
+            PermissionService permissionService,
+            RoleService roleService
     ) {
         this.passwordEncoder = passwordEncoder;
         this.portalUserRepository = portalUserRepository;
         this.roleRepository = roleRepository;
         this.permissionRepository = permissionRepository;
+        this.roleService = roleService;
+        this.permissionService = permissionService;
         initializeRoles();
+        List<Permission> permissions = permissionRepository.findPermissionByRole("ADMIN");
+        System.out.println(permissions);
         initializeUser(Stream.of("ADMIN", "USER").collect(Collectors.toList()));
         //initializeUser("USER", "user");
     }
@@ -56,21 +68,20 @@ public class AppInitializer {
         initialRoles.forEach((roles, permissions) -> {
             Role role = new Role();
             roles.forEach(r->{
-                role.setName(r);
-                if (roleRepository.findByName(r) == null){
-                    roleRepository.save(role);
-                }
-                permissions.forEach(p -> {
-                    Permission permission = new Permission();
-                    System.out.println("role======"+r+"permission====="+p);
-                    permission.setName(p);
-                    if (permissionRepository.findByName(p) == null) {
-                        permissionRepository.save(permission);
-                    }
-                });
+//                role.setName(r);
+//                if (roleRepository.findByName(r) == null){
+//                    roleRepository.save(role);
+//                }
+//                permissions.forEach(p -> {
+//                    Permission permission = new Permission();
+//                    //System.out.println("role======"+r+"permission====="+p);
+//                    permission.setName(p);
+//                    if (permissionRepository.findByName(p) == null) {
+//                        permissionRepository.save(permission);
+//                    }
+//                });
+
             });
-//            if (roleRepository.findByNameIn(roles) == null) {
-//            }
         });
     }
 
@@ -101,9 +112,9 @@ public class AppInitializer {
             roles.forEach(role -> {
                 //System.out.println(role.getName());
                 role.setPermissions(permissionRepository.findPermissionByRole(role.getName()));
-                System.out.println(permissionRepository.findPermissionByRole(role.getName()));
+                //System.out.println(permissionRepository.findPermissionByRole(role.getName()));
             });
-            System.out.println(roles);
+            //System.out.println(roles);
             portalUser.setRoles(roles);
             portalUserRepository.save(portalUser);
         }

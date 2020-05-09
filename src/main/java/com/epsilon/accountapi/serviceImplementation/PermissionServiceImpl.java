@@ -6,6 +6,7 @@ import com.epsilon.accountapi.service.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -19,8 +20,13 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public Permission createPermission(Permission permission) {
-        return permissionRepository.save(permission);
+    @Transactional
+    public void createPermission(String permissionName) {
+        Permission permission = permissionRepository.findByName(permissionName);
+        if (permission == null){
+            permission.setName(permissionName);
+            permissionRepository.save(permission);
+        }
     }
 
     @Override

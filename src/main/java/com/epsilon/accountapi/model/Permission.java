@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 @Data
@@ -22,6 +23,6 @@ public class Permission extends BaseIdEntity implements Serializable {
 
     private String name;
 
-    @ManyToMany(mappedBy = "permissions", fetch = FetchType.EAGER)
-    private List<Role> roles;
+    @ManyToMany(mappedBy = "permissions")
+    private Collection<Role> roles;
 }

@@ -1,11 +1,13 @@
 package com.epsilon.accountapi.serviceImplementation;
 
 import com.epsilon.accountapi.dao.PortalUserRepository;
+import com.epsilon.accountapi.dao.RoleRepository;
 import com.epsilon.accountapi.dto.CreatePortalUserDto;
 import com.epsilon.accountapi.dto.UpdatePortalUserDto;
 import com.epsilon.accountapi.enumeration.GenericStatusConstant;
 import com.epsilon.accountapi.exception.DoesNotExistException;
 import com.epsilon.accountapi.model.PortalUser;
+import com.epsilon.accountapi.model.Role;
 import com.epsilon.accountapi.service.AddressService;
 import com.epsilon.accountapi.service.PortalUserService;
 import com.epsilon.accountapi.service.RoleService;
@@ -19,8 +21,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -36,20 +40,25 @@ public class PortalUserServiceImpl implements PortalUserService {
 
     private RoleService roleService;
 
+    private RoleRepository roleRepository;
+
     @Autowired
     PortalUserServiceImpl(
             @Qualifier("portalUserRepo")PortalUserRepository portalUserRepository,
             BCryptPasswordEncoder bCryptPasswordEncoder,
             AddressService addressService,
-            RoleService roleService
+            RoleService roleService,
+            RoleRepository roleRepository
     ){
         this.portalUserRepository = portalUserRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.addressService = addressService;
         this.roleService = roleService;
+        this.roleRepository = roleRepository;
     }
 
     @Override
+    @Transactional
     public void createPortalUser(CreatePortalUserDto portalUserDto) {
         PortalUser portalUser = new PortalUser();
         portalUser.setFirstName(portalUserDto.getFirstName().trim());
@@ -69,10 +78,13 @@ public class PortalUserServiceImpl implements PortalUserService {
         portalUser.setStatus(GenericStatusConstant.ACTIVE);
         portalUser.setPassword(bCryptPasswordEncoder.encode(portalUserDto.getPassword().trim()));
         portalUser.setAddress(addressService.createPortalUserAddress(portalUserDto));
+        List<Role> roles = roleRepository.findRoleByName("USER");
+        portalUser.setRoles(roles);
         portalUserRepository.save(portalUser);
     }
 
     @Override
+    @Transactional
     public void updatePortalUser(Long id, UpdatePortalUserDto portalUserDto) throws DoesNotExistException {
         Optional<PortalUser> optionalPortalUser = portalUserRepository.findById(id);
         if (optionalPortalUser.isPresent()){

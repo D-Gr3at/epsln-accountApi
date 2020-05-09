@@ -1,12 +1,14 @@
 package com.epsilon.accountapi.service;
 
+import com.epsilon.accountapi.model.Permission;
 import com.epsilon.accountapi.model.Role;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface RoleService {
 
-    Role createRole(Role role);
+    Role createRole(String roleName, Collection<Permission> permissions);
 
     Role updateRole(Role role);
 
